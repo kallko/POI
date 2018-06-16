@@ -12,7 +12,7 @@ module.exports = {
 };
 
 
-
+//create and save POI in DB
 function createPOI(req, res) {
 
     const categories = req.body.categories.map((category) => category.toLowerCase());
@@ -25,13 +25,12 @@ function createPOI(req, res) {
         address : req.body.address.toLowerCase(),
     });
 
-
     reqToSave.save().then(
         () => {res.status(200).json("Create successful ")},
         (error) => {res.status(400).json("Error in creation ", error)});
 }
 
-
+//search POI by name
 function searchPOIByName(req, res) {
 
     const name = req.swagger.params.POIName.value.toLowerCase();
@@ -49,7 +48,8 @@ function searchPOIByName(req, res) {
     });
 }
 
-
+//search POI by categories
+// result must include all specified categories
 function searchPOIByCategories(req, res) {
 
     const categories = req.body.categories.map((category) => category.toLowerCase());
@@ -68,11 +68,13 @@ function searchPOIByCategories(req, res) {
 
 }
 
+//modify POI
+// to modify point you should enter old name and old lat\lon of POI
+// and all new fields
 function modifyPOI (req, res) {
 
     const oldName = req.body.oldName.toLowerCase();
     const categories = req.body.categories.map((category) => category.toLowerCase());
-
 
     Points.collection.updateOne({ name: oldName, lat: req.body.oldLat, lon: req.body.oldLon }, {$set: {
         name: req.body.name.toLowerCase(),
@@ -86,11 +88,11 @@ function modifyPOI (req, res) {
         } else {
             res.status(200).json("Update Success")
         }
-
     });
 
 }
 
+//find all POI in square lat1\lon1 => lat2\lon2
 function searchPOIInBox(req, res) {
 
     const lat1 = req.swagger.params.lat1.value;
@@ -104,7 +106,6 @@ function searchPOIInBox(req, res) {
     const latMin = Math.min(lat1, lat2);
     const lonMax = Math.max(lon1, lon2);
     const lonMin = Math.min(lon1, lon2);
-
 
     Points.collection.find( { lat: { $lte: latMax, $gte: latMin }, lon: {$lte: lonMax, $gte: lonMin} }).toArray(function(error, result) {
         if (error) {

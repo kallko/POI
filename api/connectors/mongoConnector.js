@@ -20,7 +20,7 @@ mongoose.connection.on('error', () => {
 process.exit();
 });
 
-
+//Schema for POI:
 let Points = new mongoose.Schema(({
     name : String,
     lat: Number,

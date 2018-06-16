@@ -1,0 +1,201 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Find and Manage POI
+host: localhost:10010
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /create:
+    x-swagger-router-controller: POIcontroller
+    post:
+      description: Create new POI
+      operationId: createPOI
+      parameters:
+        - name: POI
+          in: body
+          description: the name
+          required: true
+          schema:
+            $ref: "#/definitions/POI"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/InfoResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /searchbyname:
+    x-swagger-router-controller: POIcontroller
+    get:
+      description: serch By name of POI
+      operationId: searchPOIByName
+      parameters:
+        - name: POIName
+          in: query
+          description: the name of POI
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SerchResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse" 
+  /searchbycategories:
+    x-swagger-router-controller: POIcontroller
+    post:
+      description: serch By POI categories
+      operationId: searchPOIByCategories
+      parameters:
+        - name: categories
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Categories"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SerchResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /searchinbox:
+    x-swagger-router-controller: POIcontroller
+    get:
+      description: serch By name of POI
+      operationId: searchPOIInBox
+      parameters:
+        - name: lat1
+          in: query
+          required: true
+          type: number
+        - name: lon1
+          in: query
+          required: true
+          type: number
+        - name: lat2
+          in: query
+          required: true
+          type: number
+        - name: lon2
+          in: query
+          required: true
+          type: number          
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/SerchResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"            
+  /modify:
+    x-swagger-router-controller: POIcontroller
+    post:
+      description: Create new POI
+      operationId: modifyPOI
+      parameters:
+        - name: POI
+          in: body
+          description: the name
+          required: true
+          schema:
+            $ref: "#/definitions/modifyPOI"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/InfoResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"            
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  POI:
+    properties:
+      name:
+        type: string
+      lat:
+        type: number
+      lon:
+        type: number
+      categories:
+        type: array
+        items:
+          type: string
+      address:
+        type: string
+    required:
+      - name
+      - lat
+      - lon
+      - categories
+  modifyPOI:
+    properties:
+      oldName: 
+        type: string
+      oldLat: 
+        type: number
+      oldLon:
+        type: number
+      name:
+        type: string
+      lat:
+        type: number
+      lon:
+        type: number
+    required:
+      - oldName
+      - oldLat
+      - oldLon
+      - name
+      - lat
+      - lon        
+  Categories:
+    properties:
+      categories:
+        type: array
+        items:
+          type: string
+  SerchResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: array
+        items:
+          $ref: "#/definitions/POI"      
+  InfoResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
